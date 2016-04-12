@@ -3,16 +3,16 @@
   							  
 *************************************************************************************/
 function storeByName(nameKey, value){
-	if(appAPI.db.get(nameKey) ){						// check if there is a value already stored for this namekey
+	if(appAPI.db.get(nameKey) ){						
 		var oldValue = appAPI.db.get(nameKey);
-		var newValues = [oldValue, value];				// if so, append new value with old value(s)
+		var newValues = [oldValue, value];				
 		
-		if(oldValue.localeCompare(value)  !== 0 ){  	// check the 2 values are not equal
+		if(oldValue.localeCompare(value)  !== 0 ){  	
 			appAPI.db.set(nameKey, newValues);
 		}
 	}
 	else{
-		appAPI.db.set(nameKey, value);					// else nameKey not previously stored
+		appAPI.db.set(nameKey, value);					
 	}
 }
 
@@ -33,11 +33,9 @@ function matchURLdata(urlObject){
 	
 	var input = document.getElementsByTagName("input"); 
 	var data = appAPI.JSON.parse(urlObject);	
-	
-	var obj = data[0];							//>>>>>>>>>>>>>>>>>>>>>>>>>>>>> NEED TO CHANGE !
+	var obj = data[0];							
 	var keys = Object.keys(obj);
 	
-//	var values = Object.values(obj);  ---> experimental technology, not implemented yet
 	for(var i = 0; i < keys.length; i++) {
 	    
 	    var key = keys[i];
@@ -53,7 +51,7 @@ function matchURLdata(urlObject){
 
 /************************************************************************************
   Function: extractFormData - get form data 
-  							  using Crossrider app
+  							  
 *************************************************************************************/
 function extractFormData(current_url, urlFound){
 	var input = document.getElementsByTagName("input"); 
@@ -76,7 +74,6 @@ function extractFormData(current_url, urlFound){
 			}
 		}
 		else if(type === 'password'){
-			// Ask the user's permission before storing a password 
 			var popup = window.confirm("Would you like Form-Matic to store your password?");
 			
 			if(popup === true) {
@@ -91,10 +88,9 @@ function extractFormData(current_url, urlFound){
 		}
 		
 		if( values[i] ){ 
-			storeByName(names[i], values[i]); // Call Function to store all non-empty "name-value" pairs (one by one)
-			
-			obj[names[i]] = values[i];		  // Also, create a dict object
-			urlData.push(obj);				  // and add the value, and corresponding name key to the urlData Array
+			storeByName(names[i], values[i]); 
+			obj[names[i]] = values[i];		 
+			urlData.push(obj);				  
 		}
 	} 
 	
@@ -152,22 +148,18 @@ appAPI.ready(function($) {
 	        }
 	        else if(value !== null ){ 	
 	        	urlFound = true;
-	        	// Retrieve all keys-value pairs from local database (urlStore)
 	    		appAPI.db.async.getList(function(arrayOfItems) {
-			        // Process the result
 			        for(var i = 0; i < arrayOfItems.length; i++) {
-			        	
 			        	if(arrayOfItems[i].key === url){
 			        		var urlData = arrayOfItems[i].value;
 			        		matchURLdata(urlData);	
 			        	}
 			        }
 			    });
-	        	
 	        }
 	        else{					
 	        	urlFound = false;
-	        	searchStoredData();		// call function to search local database (NameStore)
+	        	searchStoredData();		
 	        }
 		});
 		
@@ -201,16 +193,16 @@ appAPI.ready(function($) {
 function searchStoredData(){   
 		
 	var input = document.getElementsByTagName("input"); 
-	var storedItems = appAPI.db.getList(); // returns a list of key-pair values from local database
+	var storedItems = appAPI.db.getList(); 
 	var excludeSearch = null;
 
 	for(var i=0; i < input.length; i++){
 		
 	    for(var j=0; j<storedItems.length; j++) {
 	    	// pattern match against stored data for any key with "search" or "q" - to be excluded, in order to prevent autofilling form search fields
-	    	excludeSearch = (storedItems[j].key).match(/search|q/i); // returns null if no match is found (i=ignore case)
+	    	excludeSearch = (storedItems[j].key).match(/search|q/i); // returns null if no match is found 
 	       
-	        if((storedItems[j].key === input[i].getAttribute('id') || storedItems[j].key === input[i].getAttribute('name')) && excludeSearch === null){	// check for a match     
+	        if((storedItems[j].key === input[i].getAttribute('id') || storedItems[j].key === input[i].getAttribute('name')) && excludeSearch === null){    
 	        
 	        	if(typeof(storedItems[j].value) === 'object'){ 
 		    		
