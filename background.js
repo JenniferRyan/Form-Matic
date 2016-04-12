@@ -1,25 +1,28 @@
 /************************************************************************************
-  This is your background code.
-  For more information please visit our wiki site:
-  http://docs.crossrider.com/#!/guide/scopes_background
+  Background code
+
 *************************************************************************************/
-
 appAPI.ready(function() {
-    // Add the icon from the Resources folder
-    // See the note following this code.
+    
+    var popupDims = {
+		CH: {height: 65, width: 120}, // Chrome
+		FF: {height: 65, width: 120}, // Firefox
+		IE: {height: 70, width: 120}, // Internet Explorer
+		SF: {height: 65, width: 120}  // Safari
+	};
+	
+    // Sets the icon
     appAPI.browserAction.setResourceIcon('icon.png');
+	
+	if ("CHFFIESF".indexOf(appAPI.platform) !== -1) {
+		appAPI.browserAction.setPopup({
+			resourcePath:'popup.html',
+			height:popupDims[appAPI.platform].height,
+			width:popupDims[appAPI.platform].width
+		});
+	}
+	else {
+		alert('This extension is not supported on your browser');
+	}
 
-    // Add a semi-transparent badge
-    //
-    // NOTE: Call the setBadgeUpdate method again to update the badge
-    // appAPI.browserAction.setBadgeText('extn', [255,0,0,125]);
-
-    // Add a tooltip
-    appAPI.browserAction.setTitle('More about Form-Matic');
-
-    // And most importantly, add the click action
-    appAPI.browserAction.onClick(function() {
-        //e.g. Open a page in a new tab
-        appAPI.openURL("http://glasnost.itcarlow.ie/~jen/", "tab");
-    });
 });

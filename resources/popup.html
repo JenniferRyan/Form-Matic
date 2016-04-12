@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- This meta tag is relevant only for IE -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<script type="text/javascript">
+/************************************************************************************
+	The crossriderMain() code block will be run every time the popup is opened.
+*************************************************************************************/
+function crossriderMain($) {
+	eval(appAPI.resources.get("jqueryui/jquery-ui-1.10.3.custom.min.js"));
+	appAPI.resources.includeCSS("jqueryui/jquery-ui-1.10.3.custom.min.css");
+	appAPI.resources.includeCSS("popup.css");
+	
+	appAPI.browserAction.setTitle('Form-Matic'); 
+
+	// Render menu
+	$('#menu').menu();
+
+		$('#home').click(function(){
+			appAPI.openURL({url:'http://glasnost.itcarlow.ie/~jen/', where:'tab'});
+		});
+		$('#alert').click(function(){
+			appAPI.message.toCurrentTabWindow({action: 'alert', data: 'Are you sure you want to delete all stored data?'});
+		});
+		$('#info').click(function() {
+			appAPI.message.toCurrentTabWindow({action: 'info', data: ' - Stores form data in local browser storage' + 
+												'\r\n - All data, including passwords are stored as plain unencrypted text'});
+		});
+}
+</script>
+</head>
+	<body>
+		<ul id="menu">
+			<li><a id="home" href="#"><span class="ui-icon ui-icon-home"></span>Form-Matic</a></li>
+			<li><a id="alert" href="#"><span class="ui-icon ui-icon-closethick"></span>Delete all stored data</a></li>
+			<li><a id="info" href="#"><span class="ui-icon ui-icon-info"></span>Details</a></li>
+		</ul>
+	</body>
+</html>
