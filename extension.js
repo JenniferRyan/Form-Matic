@@ -7,7 +7,7 @@
  *   This function is called to store data all non-empty form input fields in key-value pairs
  *   where the key is the id/name attribute value and the value stored is the value which 
  *   has been entered into the form input field.
- *   It checks if a value already exists for the key, if so, it appends thee two values.
+ *   It checks if a value already exists for the key, if so, it appends the two values.
  *
  * Usage:
  *  - Every non-empty form input element is stored in this way.
@@ -47,9 +47,11 @@ function storeByName(nameKey, value){
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */  
 function storeByURL(urlKey, urlData){
-	
-	appAPI.db.async.set(urlKey, appAPI.JSON.stringify(urlData));
-	
+	var size = Object.keys(urlData).length;
+
+	if(size > 1){
+		appAPI.db.async.set(urlKey, appAPI.JSON.stringify(urlData));
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -110,7 +112,7 @@ function extractFormData(current_url, urlFound){
 	for(var i=0; i < input.length; i++){
 		
 		var type = input[i].getAttribute('type');
-
+		
 		if(type === 'text' || type === 'email' || type === 'url' || type === 'tel'  ){					    		
 			if(document.getElementById(input[i].getAttribute('id')) ){ 	
 				names[i] = input[i].getAttribute('id');
@@ -120,21 +122,24 @@ function extractFormData(current_url, urlFound){
 		    	values[i] = input[i].value;
 			}
 		}
-		else if(type === 'password'){
-			var popup = window.confirm("Would you like Form-Matic to store your password?");
+		else if(type === 'password'){ 
 			
-			if(popup === true) {
-				if(document.getElementById(input[i].getAttribute('id')) ){
-					names[i] = input[i].getAttribute('id');
-					values[i] = document.getElementById(input[i].getAttribute('id')).value;
-				} else {
-			    	names[i] = input[i].getAttribute('name');
-			    	values[i] = input[i].value;
-				}
-			} 
+			if( input[i].value !== ""){ 
+		    	var popup = window.confirm("Would you like Form-Matic to store your password?");
+			
+				if(popup === true) {
+					if(document.getElementById(input[i].getAttribute('id')) ){
+						names[i] = input[i].getAttribute('id');
+						values[i] = document.getElementById(input[i].getAttribute('id')).value;
+					} else {
+				    	names[i] = input[i].getAttribute('name');
+				    	values[i] = input[i].value;
+					}
+				} 
+			}
 		}
 		
-		if( values[i] ){ 
+		if(values[i]){ 
 			storeByName(names[i], values[i]); 
 			obj[names[i]] = values[i];		 
 			urlData.push(obj);				  
@@ -152,6 +157,7 @@ function extractFormData(current_url, urlFound){
 		storeByURL(current_url, urlData);
     }
 }
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * appAPI.ready() 
@@ -192,10 +198,10 @@ appAPI.ready(function($) {
     var url = [location.protocol, '//', location.host, location.pathname].join(''); 
 	var urlFound = false;	
 	var form = document.getElementsByTagName("form");
+	var hasChanged = false;
 	
-	// Only runs if a form exists
 	if(form){	
-		appAPI.db.async.get(url, function(value) {
+		appAPI.db.async.get(url, function(value){
 	        if(value === '[]' || value === undefined){	
 	        	urlFound = false;		
 	        }
@@ -209,29 +215,30 @@ appAPI.ready(function($) {
 			        	}
 			        }
 			    });
+			    
+				$('input').bind('change', function(e) {
+					for(var i=0; i < form.length; i++){
+						form[i].addEventListener("submit", function(){
+							extractFormData(url, urlFound);
+						}, false);
+					} 
+				}); 
 	        }
 	        else{					
 	        	urlFound = false;
 	        	searchStoredData();		
 	        }
+	        
+	        if(urlFound === false){
+				for(var i=0; i < form.length; i++){
+					form[i].addEventListener("submit", function(){
+						extractFormData(url, urlFound);
+					}, false);
+				} 
+			}
+	        
 		});
 	
-	// Search through form fields for data extraction, listening for a "submit" event
-		for(var i=0; i < form.length; i++){
-		/*	var hasChangedCount = 0;
-			
-			form[i].addEventListener("click", function(){
-				hasChangedCount++;
-			//	alert(hasChangedCount);
-			}, false);
-		*/
-		//	if(hasChangedCount > 0){
-		//		alert("true");
-				form[i].addEventListener("submit", function(){
-					extractFormData(url, urlFound);
-				}, false);
-		//	}
-		}
 	}
 	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

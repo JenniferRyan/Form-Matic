@@ -1,5 +1,9 @@
 /************************************************************************************
-  Background code
+  Background Scope:
+  Runs once in the browser's background and persists as long as the browser is running 
+  
+  Purpose:
+  Manage background tasks such as handling browser buttons, context menus, tabs etc.
 
 *************************************************************************************/
 appAPI.ready(function() {
