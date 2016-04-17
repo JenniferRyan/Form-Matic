@@ -123,16 +123,18 @@ function extractFormData(current_url, urlFound){
 			}
 		}
 		else if(type === 'password'){ 
+			var id = input[i].getAttribute('id');
+			var name = input[i].getAttribute('name');
 			
-			if( input[i].value !== ""){ 
+			if((appAPI.db.get(id) === null || appAPI.db.get(name) === null) && input[i].value !== ""){
 		    	var popup = window.confirm("Would you like Form-Matic to store your password?");
-			
+
 				if(popup === true) {
-					if(document.getElementById(input[i].getAttribute('id')) ){
-						names[i] = input[i].getAttribute('id');
+					if( id  ){
+						names[i] = id;
 						values[i] = document.getElementById(input[i].getAttribute('id')).value;
 					} else {
-				    	names[i] = input[i].getAttribute('name');
+				    	names[i] = name;
 				    	values[i] = input[i].value;
 					}
 				} 
