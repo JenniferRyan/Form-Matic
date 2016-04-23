@@ -28,7 +28,6 @@ function storeByName(nameKey, value){
 	else{
 		appAPI.db.set(nameKey, value);					
 	}
-	
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -77,7 +76,6 @@ function matchURLdata(urlObject){
 	var keys = Object.keys(obj);
 	
 	for(var i = 0; i < keys.length; i++) {
-	    
 	    var key = keys[i];
 	    var value = obj[keys[i]];
 	    
@@ -138,6 +136,15 @@ function extractFormData(current_url, urlFound){
 				    	values[i] = input[i].value;
 					}
 				} 
+			}
+			else{
+				if( id ){
+					names[i] = id;
+					values[i] = document.getElementById(input[i].getAttribute('id')).value;
+				} else {
+				    names[i] = name;
+				    values[i] = input[i].value;
+				}
 			}
 		}
 		
